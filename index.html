@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+</head>
+<body>
+<h1>F***</h1>
+<canvas id="myCanvas" width="500" height="500" style="border:3px solid #000000;"></canvas>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+var socket = io();
+const c = document.getElementById('myCanvas');
+const ctx = c.getContext('2d');
+let d = "";
+//requests rect information
+document.addEventListener('keydown', (e) => {
+    switch(e.keyCode){
+    //////PLAYER 2
+        case 38:
+            //up
+            d = "u";
+            break; 
+        case 40:
+            //down
+            d = "d";
+            break;
+        case 39:
+            //up
+            d = "r";
+            break;
+        case 37:
+            //down
+            d = "l";
+            break;
+    }
+});
+
+function drawRect(x,y){
+    
+    ctx.fillRect(x,y,50,50);
+}
+function gameLoop(){
+    socket.emit('direction',d);    
+    socket.on('event_b',(users)=>{
+        ctx.fillStyle = "white";
+        ctx.fillRect(0,0,c.width,c.height);
+        for (const [key, user] of Object.entries(users)) {
+            if(user.it == true){
+                ctx.fillStyle = "blue";
+            }else{
+                ctx.fillStyle = "red";
+            }
+            drawRect(user.x,user.y);
+        }
+    });
+    d="";
+
+    //sends direction to server
+    //server returns direction 
+    //draw rect
+}
+
+i = setInterval(gameLoop,25);
+
+
+  
+</script>
+</body>
+</html>
